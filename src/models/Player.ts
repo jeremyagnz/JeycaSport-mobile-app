@@ -46,6 +46,8 @@ export interface PlayerStatistics {
   strikeouts: number;
   stolenBases: number;
   caughtStealing: number;
+  hitByPitch: number; // Hit by Pitch
+  sacrificeFlies: number; // Sacrifice Flies
   battingAverage: number;
   onBasePercentage: number;
   sluggingPercentage: number;
