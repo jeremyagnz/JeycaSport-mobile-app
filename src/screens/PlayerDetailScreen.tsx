@@ -22,6 +22,18 @@ const calculateAge = (dateOfBirth: string): number => {
   return age;
 };
 
+// Helper function to get batting side description
+const getBatSideDescription = (batSide: string): string => {
+  if (batSide === 'L') return 'Left';
+  if (batSide === 'R') return 'Right';
+  return 'Switch';
+};
+
+// Helper function to get throwing side description
+const getThrowSideDescription = (throwSide: string): string => {
+  return throwSide === 'L' ? 'Left' : 'Right';
+};
+
 export const PlayerDetailScreen: React.FC = () => {
   const route = useRoute<PlayerDetailRouteProp>();
   const { playerId } = route.params;
@@ -78,12 +90,12 @@ export const PlayerDetailScreen: React.FC = () => {
           <StatCard
             label="Bats"
             value={player.bats}
-            subtitle={player.bats === 'L' ? 'Left' : player.bats === 'R' ? 'Right' : 'Switch'}
+            subtitle={getBatSideDescription(player.bats)}
           />
           <StatCard
             label="Throws"
             value={player.throws}
-            subtitle={player.throws === 'L' ? 'Left' : 'Right'}
+            subtitle={getThrowSideDescription(player.throws)}
           />
         </View>
       </View>
@@ -132,35 +144,37 @@ export const PlayerDetailScreen: React.FC = () => {
           </View>
 
           {/* Pitching Statistics (if available) */}
-          {stats.wins !== undefined && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Pitching Statistics</Text>
-              <View style={styles.statsGrid}>
-                <StatCard
-                  label="ERA"
-                  value={stats.era?.toFixed(2) || 'N/A'}
-                  subtitle="Earned Run Average"
-                />
-                <StatCard
-                  label="WHIP"
-                  value={stats.whip?.toFixed(2) || 'N/A'}
-                  subtitle="Walks + Hits/IP"
-                />
-                <StatCard label="W" value={stats.wins ?? 0} subtitle="Wins" />
-                <StatCard label="L" value={stats.losses ?? 0} subtitle="Losses" />
+          {stats.wins !== undefined &&
+            stats.losses !== undefined &&
+            stats.inningsPitched !== undefined && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Pitching Statistics</Text>
+                <View style={styles.statsGrid}>
+                  <StatCard
+                    label="ERA"
+                    value={stats.era?.toFixed(2) ?? 'N/A'}
+                    subtitle="Earned Run Average"
+                  />
+                  <StatCard
+                    label="WHIP"
+                    value={stats.whip?.toFixed(2) ?? 'N/A'}
+                    subtitle="Walks + Hits/IP"
+                  />
+                  <StatCard label="W" value={stats.wins} subtitle="Wins" />
+                  <StatCard label="L" value={stats.losses} subtitle="Losses" />
+                </View>
+                <View style={styles.statsGrid}>
+                  <StatCard
+                    label="IP"
+                    value={stats.inningsPitched.toFixed(1)}
+                    subtitle="Innings Pitched"
+                  />
+                  <StatCard label="K" value={stats.strikeoutsRecorded ?? 0} subtitle="Strikeouts" />
+                  <StatCard label="BB" value={stats.walksAllowed ?? 0} subtitle="Walks Allowed" />
+                  <StatCard label="H" value={stats.hitsAllowed ?? 0} subtitle="Hits Allowed" />
+                </View>
               </View>
-              <View style={styles.statsGrid}>
-                <StatCard
-                  label="IP"
-                  value={stats.inningsPitched?.toFixed(1) || 'N/A'}
-                  subtitle="Innings Pitched"
-                />
-                <StatCard label="K" value={stats.strikeoutsRecorded ?? 0} subtitle="Strikeouts" />
-                <StatCard label="BB" value={stats.walksAllowed ?? 0} subtitle="Walks Allowed" />
-                <StatCard label="H" value={stats.hitsAllowed ?? 0} subtitle="Hits Allowed" />
-              </View>
-            </View>
-          )}
+            )}
         </>
       )}
     </ScrollView>
