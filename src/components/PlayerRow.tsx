@@ -100,12 +100,12 @@ const styles = StyleSheet.create({
   position: {
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.textSecondary,
-    marginLeft: -8,
+    marginLeft: theme.spacing.sm * -1,
   },
   team: {
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.textSecondary,
-    marginLeft: -8,
+    marginLeft: theme.spacing.sm * -1,
   },
   chevron: {
     margin: 0,
