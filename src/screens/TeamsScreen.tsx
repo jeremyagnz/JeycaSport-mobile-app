@@ -2,58 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
 import { theme } from '../theme';
 import type { Team } from '../models/Team';
-
-// Mock team data for display
-const mockTeams: Pick<Team, 'id' | 'name' | 'abbreviation' | 'statistics'>[] = [
-  {
-    id: '1',
-    name: 'New York Yankees',
-    abbreviation: 'NYY',
-    statistics: { season: 2024, wins: 95, losses: 67, winPercentage: 0.586 } as Team['statistics'],
-  },
-  {
-    id: '2',
-    name: 'Los Angeles Dodgers',
-    abbreviation: 'LAD',
-    statistics: { season: 2024, wins: 98, losses: 64, winPercentage: 0.605 } as Team['statistics'],
-  },
-  {
-    id: '3',
-    name: 'Houston Astros',
-    abbreviation: 'HOU',
-    statistics: { season: 2024, wins: 90, losses: 72, winPercentage: 0.556 } as Team['statistics'],
-  },
-  {
-    id: '4',
-    name: 'Atlanta Braves',
-    abbreviation: 'ATL',
-    statistics: { season: 2024, wins: 92, losses: 70, winPercentage: 0.568 } as Team['statistics'],
-  },
-  {
-    id: '5',
-    name: 'Tampa Bay Rays',
-    abbreviation: 'TB',
-    statistics: { season: 2024, wins: 88, losses: 74, winPercentage: 0.543 } as Team['statistics'],
-  },
-  {
-    id: '6',
-    name: 'San Francisco Giants',
-    abbreviation: 'SF',
-    statistics: { season: 2024, wins: 85, losses: 77, winPercentage: 0.525 } as Team['statistics'],
-  },
-  {
-    id: '7',
-    name: 'Toronto Blue Jays',
-    abbreviation: 'TOR',
-    statistics: { season: 2024, wins: 87, losses: 75, winPercentage: 0.537 } as Team['statistics'],
-  },
-  {
-    id: '8',
-    name: 'Chicago White Sox',
-    abbreviation: 'CWS',
-    statistics: { season: 2024, wins: 72, losses: 90, winPercentage: 0.444 } as Team['statistics'],
-  },
-];
+import { mockTeams } from '../constants/mockData';
 
 interface TeamRowProps {
   team: Pick<Team, 'id' | 'name' | 'abbreviation' | 'statistics'>;
