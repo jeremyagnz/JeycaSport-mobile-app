@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { IconButton } from 'react-native-paper';
+import { IconButton, Icon } from 'react-native-paper';
 import { theme } from '../theme';
 
 interface PlayerRowProps {
@@ -21,21 +21,11 @@ export const PlayerRow: React.FC<PlayerRowProps> = ({ name, position, team, numb
         <Text style={styles.name}>{name}</Text>
         <View style={styles.detailsRow}>
           <View style={styles.detailItem}>
-            <IconButton
-              icon="shield-star"
-              size={16}
-              iconColor={theme.colors.textSecondary}
-              style={styles.icon}
-            />
+            <Icon source="shield-star" size={16} color={theme.colors.textSecondary} />
             <Text style={styles.position}>{position}</Text>
           </View>
           <View style={styles.detailItem}>
-            <IconButton
-              icon="account-group"
-              size={16}
-              iconColor={theme.colors.textSecondary}
-              style={styles.icon}
-            />
+            <Icon source="account-group" size={16} color={theme.colors.textSecondary} />
             <Text style={styles.team}>{team}</Text>
           </View>
         </View>
@@ -92,20 +82,15 @@ const styles = StyleSheet.create({
   detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  icon: {
-    margin: 0,
-    padding: 0,
+    gap: theme.spacing.xs,
   },
   position: {
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.textSecondary,
-    marginLeft: theme.spacing.sm * -1,
   },
   team: {
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.textSecondary,
-    marginLeft: theme.spacing.sm * -1,
   },
   chevron: {
     margin: 0,

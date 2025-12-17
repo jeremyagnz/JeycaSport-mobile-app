@@ -40,15 +40,21 @@ export const PlayersScreen: React.FC = () => {
 
   // Render player item
   const renderPlayer = useCallback(
-    ({ item }: { item: Player }) => (
-      <PlayerRow
-        name={item.name}
-        position={item.position}
-        team={teamNames[item.teamId] || 'Unknown Team'}
-        number={item.number}
-        onPress={() => handlePlayerPress(item.id)}
-      />
-    ),
+    ({ item }: { item: Player }) => {
+      const teamName = teamNames[item.teamId];
+      if (!teamName) {
+        console.warn(`Player ${item.name} (${item.id}) has invalid teamId: ${item.teamId}`);
+      }
+      return (
+        <PlayerRow
+          name={item.name}
+          position={item.position}
+          team={teamName || `Team #${item.teamId}`}
+          number={item.number}
+          onPress={() => handlePlayerPress(item.id)}
+        />
+      );
+    },
     [handlePlayerPress]
   );
 
