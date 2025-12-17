@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, ScrollView, Alert } from 'react-native';
-import { TextInput, Button, useTheme, Title } from 'react-native-paper';
+import { TextInput, Button, useTheme, Title, ActivityIndicator } from 'react-native-paper';
 import type { MD3Theme } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type {
@@ -25,6 +25,7 @@ export const AdminEditStatsScreen: React.FC = () => {
 
   const [entityName, setEntityName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(false);
 
   // Player batting stats
   const [gamesPlayed, setGamesPlayed] = useState('0');
@@ -46,6 +47,7 @@ export const AdminEditStatsScreen: React.FC = () => {
   }, [entityId, entityType]);
 
   const loadEntity = async () => {
+    setIsLoadingData(true);
     try {
       if (entityType === 'player') {
         const players = await loadData<Player[]>(STORAGE_KEYS.PLAYERS);
@@ -76,6 +78,9 @@ export const AdminEditStatsScreen: React.FC = () => {
       }
     } catch (error) {
       console.error('Error loading entity:', error);
+      Alert.alert('Error', 'Failed to load data');
+    } finally {
+      setIsLoadingData(false);
     }
   };
 
@@ -156,6 +161,20 @@ export const AdminEditStatsScreen: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  if (isLoadingData) {
+    return (
+      <View
+        style={[
+          styles.scrollView,
+          styles.centered,
+          { backgroundColor: paperTheme.colors.background },
+        ]}
+      >
+        <ActivityIndicator size="large" color={paperTheme.colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -290,6 +309,10 @@ export const AdminEditStatsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
+  },
+  centered: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
     padding: theme.spacing.lg,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, ScrollView, Alert } from 'react-native';
-import { TextInput, Button, useTheme } from 'react-native-paper';
+import { TextInput, Button, useTheme, ActivityIndicator } from 'react-native-paper';
 import type { MD3Theme } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type {
@@ -26,6 +26,7 @@ export const AdminEditTeamScreen: React.FC = () => {
   const [name, setName] = useState('');
   const [abbreviation, setAbbreviation] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(false);
 
   useEffect(() => {
     if (isEditing) {
@@ -35,6 +36,7 @@ export const AdminEditTeamScreen: React.FC = () => {
   }, [teamId]);
 
   const loadTeam = async () => {
+    setIsLoadingData(true);
     try {
       const teams = await loadData<Team[]>(STORAGE_KEYS.TEAMS);
       const team = teams?.find((t) => t.id === teamId);
@@ -44,6 +46,9 @@ export const AdminEditTeamScreen: React.FC = () => {
       }
     } catch (error) {
       console.error('Error loading team:', error);
+      Alert.alert('Error', 'Failed to load team data');
+    } finally {
+      setIsLoadingData(false);
     }
   };
 
@@ -105,6 +110,20 @@ export const AdminEditTeamScreen: React.FC = () => {
     }
   };
 
+  if (isLoadingData) {
+    return (
+      <View
+        style={[
+          styles.scrollView,
+          styles.centered,
+          { backgroundColor: paperTheme.colors.background },
+        ]}
+      >
+        <ActivityIndicator size="large" color={paperTheme.colors.primary} />
+      </View>
+    );
+  }
+
   return (
     <ScrollView
       style={[styles.scrollView, { backgroundColor: paperTheme.colors.background }]}
@@ -155,6 +174,10 @@ export const AdminEditTeamScreen: React.FC = () => {
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
+  },
+  centered: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
     padding: theme.spacing.lg,

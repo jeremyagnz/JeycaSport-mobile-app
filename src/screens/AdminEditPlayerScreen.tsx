@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, ScrollView, Alert } from 'react-native';
-import { TextInput, Button, useTheme } from 'react-native-paper';
+import { TextInput, Button, useTheme, ActivityIndicator } from 'react-native-paper';
 import type { MD3Theme } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type {
@@ -33,6 +33,7 @@ export const AdminEditPlayerScreen: React.FC = () => {
   const [bats, setBats] = useState<BatSide>('R');
   const [throws, setThrows] = useState<ThrowSide>('R');
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(false);
 
   useEffect(() => {
     if (isEditing) {
@@ -42,6 +43,7 @@ export const AdminEditPlayerScreen: React.FC = () => {
   }, [playerId]);
 
   const loadPlayer = async () => {
+    setIsLoadingData(true);
     try {
       const players = await loadData<Player[]>(STORAGE_KEYS.PLAYERS);
       const player = players?.find((p) => p.id === playerId);
@@ -58,6 +60,9 @@ export const AdminEditPlayerScreen: React.FC = () => {
       }
     } catch (error) {
       console.error('Error loading player:', error);
+      Alert.alert('Error', 'Failed to load player data');
+    } finally {
+      setIsLoadingData(false);
     }
   };
 
@@ -101,6 +106,20 @@ export const AdminEditPlayerScreen: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  if (isLoadingData) {
+    return (
+      <View
+        style={[
+          styles.scrollView,
+          styles.centered,
+          { backgroundColor: paperTheme.colors.background },
+        ]}
+      >
+        <ActivityIndicator size="large" color={paperTheme.colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -227,6 +246,10 @@ export const AdminEditPlayerScreen: React.FC = () => {
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
+  },
+  centered: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
     padding: theme.spacing.lg,
