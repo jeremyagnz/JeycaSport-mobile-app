@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import { useTheme } from 'react-native-paper';
+import type { MD3Theme } from 'react-native-paper';
 import { theme } from '../theme';
 import { mockPlayers } from '../constants/mockData';
 import type { Player } from '../models/Player';
@@ -12,6 +14,7 @@ interface StatLeader extends Player {
 }
 
 export const StatsScreen: React.FC = () => {
+  const paperTheme = useTheme<MD3Theme>();
   const [selectedCategory, setSelectedCategory] = useState<StatCategory>('AVG');
 
   // Calculate stat leaders based on selected category
@@ -69,35 +72,43 @@ export const StatsScreen: React.FC = () => {
   }, [selectedCategory]);
 
   // Render category selector button
-  const renderCategoryButton = (category: StatCategory, label: string) => (
-    <TouchableOpacity
-      style={[styles.categoryButton, selectedCategory === category && styles.categoryButtonActive]}
-      onPress={() => setSelectedCategory(category)}
-      activeOpacity={0.7}
-    >
-      <Text
+  const renderCategoryButton = (category: StatCategory, label: string) => {
+    const isActive = selectedCategory === category;
+    return (
+      <TouchableOpacity
         style={[
-          styles.categoryButtonText,
-          selectedCategory === category && styles.categoryButtonTextActive,
+          styles.categoryButton,
+          { backgroundColor: isActive ? paperTheme.colors.primary : paperTheme.colors.surface },
         ]}
+        onPress={() => setSelectedCategory(category)}
+        activeOpacity={0.7}
       >
-        {label}
-      </Text>
-    </TouchableOpacity>
-  );
+        <Text
+          style={[
+            styles.categoryButtonText,
+            { color: isActive ? paperTheme.colors.onPrimary : paperTheme.colors.onSurface },
+          ]}
+        >
+          {label}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
   // Render stat leader row
   const renderStatLeader = ({ item }: { item: StatLeader }) => (
-    <View style={styles.statRow}>
-      <Text style={styles.rankText}>{item.rank}</Text>
+    <View style={[styles.statRow, { backgroundColor: paperTheme.colors.surface }]}>
+      <Text style={[styles.rankText, { color: paperTheme.colors.onSurface }]}>{item.rank}</Text>
       <View style={styles.playerInfo}>
-        <Text style={styles.playerName} numberOfLines={1}>
+        <Text style={[styles.playerName, { color: paperTheme.colors.onSurface }]} numberOfLines={1}>
           {item.name}
         </Text>
-        <Text style={styles.playerPosition}>{item.position}</Text>
+        <Text style={[styles.playerPosition, { color: paperTheme.colors.onSurfaceVariant }]}>
+          {item.position}
+        </Text>
       </View>
       <View style={styles.statValueContainer}>
-        <Text style={styles.statValue}>
+        <Text style={[styles.statValue, { color: paperTheme.colors.primary }]}>
           {selectedCategory === 'AVG'
             ? item.statValue.toFixed(3)
             : selectedCategory === 'OPS'
@@ -105,15 +116,19 @@ export const StatsScreen: React.FC = () => {
               : item.statValue.toFixed(2)}
         </Text>
         {selectedCategory === 'AVG' && item.statistics && (
-          <Text style={styles.statDetail}>
+          <Text style={[styles.statDetail, { color: paperTheme.colors.onSurfaceVariant }]}>
             {item.statistics.hits}/{item.statistics.atBats}
           </Text>
         )}
         {selectedCategory === 'OPS' && item.statistics && (
-          <Text style={styles.statDetail}>OBP: {item.statistics.onBasePercentage.toFixed(3)}</Text>
+          <Text style={[styles.statDetail, { color: paperTheme.colors.onSurfaceVariant }]}>
+            OBP: {item.statistics.onBasePercentage.toFixed(3)}
+          </Text>
         )}
         {selectedCategory === 'ERA' && item.statistics && (
-          <Text style={styles.statDetail}>{item.statistics.inningsPitched?.toFixed(1)} IP</Text>
+          <Text style={[styles.statDetail, { color: paperTheme.colors.onSurfaceVariant }]}>
+            {item.statistics.inningsPitched?.toFixed(1)} IP
+          </Text>
         )}
       </View>
     </View>
@@ -122,7 +137,7 @@ export const StatsScreen: React.FC = () => {
   // Render empty state
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>
+      <Text style={[styles.emptyText, { color: paperTheme.colors.onSurfaceVariant }]}>
         No {selectedCategory === 'ERA' ? 'pitching' : 'batting'} statistics available
       </Text>
     </View>
@@ -130,19 +145,27 @@ export const StatsScreen: React.FC = () => {
 
   // Render header
   const renderHeader = () => (
-    <View style={styles.tableHeader}>
-      <Text style={styles.headerRank}>Rank</Text>
-      <Text style={styles.headerPlayer}>Player</Text>
-      <Text style={styles.headerStat}>{selectedCategory}</Text>
+    <View style={[styles.tableHeader, { backgroundColor: paperTheme.colors.background }]}>
+      <Text style={[styles.headerRank, { color: paperTheme.colors.onSurfaceVariant }]}>Rank</Text>
+      <Text style={[styles.headerPlayer, { color: paperTheme.colors.onSurfaceVariant }]}>
+        Player
+      </Text>
+      <Text style={[styles.headerStat, { color: paperTheme.colors.onSurfaceVariant }]}>
+        {selectedCategory}
+      </Text>
     </View>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: paperTheme.colors.background }]}>
       {/* Title */}
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>League Leaders</Text>
-        <Text style={styles.subtitle}>Top performers by statistical category</Text>
+        <Text style={[styles.title, { color: paperTheme.colors.onBackground }]}>
+          League Leaders
+        </Text>
+        <Text style={[styles.subtitle, { color: paperTheme.colors.onSurfaceVariant }]}>
+          Top performers by statistical category
+        </Text>
       </View>
 
       {/* Category Selector */}
@@ -174,7 +197,6 @@ export const StatsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
   },
   titleContainer: {
     paddingHorizontal: theme.spacing.md,
@@ -185,13 +207,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: theme.typography.fontSize.xxl,
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text,
     marginBottom: theme.spacing.xs,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.textSecondary,
     textAlign: 'center',
   },
   categoryContainer: {
@@ -203,22 +223,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
     borderRadius: 20,
-    backgroundColor: theme.colors.card,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
     marginRight: theme.spacing.sm,
-  },
-  categoryButtonActive: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
+    elevation: 2,
   },
   categoryButtonText: {
     fontSize: theme.typography.fontSize.sm,
     fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text,
-  },
-  categoryButtonTextActive: {
-    color: theme.colors.background,
   },
   listContent: {
     paddingHorizontal: theme.spacing.md,
@@ -229,49 +239,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: theme.spacing.sm,
     paddingHorizontal: theme.spacing.sm,
-    backgroundColor: theme.colors.background,
     borderBottomWidth: 2,
-    borderBottomColor: theme.colors.border,
     marginBottom: theme.spacing.xs,
   },
   headerRank: {
     width: 50,
     fontSize: theme.typography.fontSize.xs,
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.textSecondary,
     textTransform: 'uppercase',
   },
   headerPlayer: {
     flex: 1,
     fontSize: theme.typography.fontSize.xs,
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.textSecondary,
     textTransform: 'uppercase',
   },
   headerStat: {
     width: 100,
     fontSize: theme.typography.fontSize.xs,
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.textSecondary,
     textTransform: 'uppercase',
     textAlign: 'right',
   },
   statRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.card,
     borderRadius: 8,
     paddingVertical: theme.spacing.sm,
     paddingHorizontal: theme.spacing.sm,
     marginBottom: theme.spacing.xs,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
+    elevation: 2,
   },
   rankText: {
     width: 50,
     fontSize: theme.typography.fontSize.lg,
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.primary,
     textAlign: 'center',
   },
   playerInfo: {
@@ -281,12 +283,10 @@ const styles = StyleSheet.create({
   playerName: {
     fontSize: theme.typography.fontSize.md,
     fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text,
     marginBottom: 2,
   },
   playerPosition: {
     fontSize: theme.typography.fontSize.xs,
-    color: theme.colors.textSecondary,
   },
   statValueContainer: {
     width: 100,
@@ -295,11 +295,9 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: theme.typography.fontSize.lg,
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text,
   },
   statDetail: {
     fontSize: theme.typography.fontSize.xs,
-    color: theme.colors.textSecondary,
     marginTop: 2,
   },
   emptyContainer: {
@@ -308,7 +306,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: theme.typography.fontSize.md,
-    color: theme.colors.textSecondary,
     textAlign: 'center',
   },
 });

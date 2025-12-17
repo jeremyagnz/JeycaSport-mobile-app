@@ -2,7 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
-import { Icon } from 'react-native-paper';
+import { Icon, useTheme } from 'react-native-paper';
+import type { MD3Theme } from 'react-native-paper';
 import { theme } from '../theme';
 import { StatCard } from '../components/StatCard';
 import { mockPlayers, teamNames } from '../constants/mockData';
@@ -36,6 +37,7 @@ const getThrowSideDescription = (throwSide: string): string => {
 
 export const PlayerDetailScreen: React.FC = () => {
   const route = useRoute<PlayerDetailRouteProp>();
+  const paperTheme = useTheme<MD3Theme>();
   const { playerId } = route.params;
 
   // Find player by ID
@@ -44,11 +46,15 @@ export const PlayerDetailScreen: React.FC = () => {
   // Handle player not found
   if (!player) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: paperTheme.colors.background }]}>
         <View style={styles.notFoundContainer}>
-          <Icon source="account-alert" size={64} color={theme.colors.textSecondary} />
-          <Text style={styles.notFoundTitle}>Player Not Found</Text>
-          <Text style={styles.notFoundSubtitle}>The requested player could not be found.</Text>
+          <Icon source="account-alert" size={64} color={paperTheme.colors.onSurfaceVariant} />
+          <Text style={[styles.notFoundTitle, { color: paperTheme.colors.onSurface }]}>
+            Player Not Found
+          </Text>
+          <Text style={[styles.notFoundSubtitle, { color: paperTheme.colors.onSurfaceVariant }]}>
+            The requested player could not be found.
+          </Text>
         </View>
       </View>
     );
@@ -59,22 +65,33 @@ export const PlayerDetailScreen: React.FC = () => {
   const stats = player.statistics;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+    <ScrollView
+      style={[styles.container, { backgroundColor: paperTheme.colors.background }]}
+      contentContainerStyle={styles.scrollContent}
+    >
       {/* Player Header */}
-      <View style={styles.header}>
-        <View style={styles.numberBadge}>
-          <Text style={styles.numberText}>#{player.number}</Text>
+      <View style={[styles.header, { backgroundColor: paperTheme.colors.surface }]}>
+        <View style={[styles.numberBadge, { backgroundColor: paperTheme.colors.primary }]}>
+          <Text style={[styles.numberText, { color: paperTheme.colors.onPrimary }]}>
+            #{player.number}
+          </Text>
         </View>
         <View style={styles.headerInfo}>
-          <Text style={styles.playerName}>{player.name}</Text>
+          <Text style={[styles.playerName, { color: paperTheme.colors.onSurface }]}>
+            {player.name}
+          </Text>
           <View style={styles.headerDetails}>
             <View style={styles.detailItem}>
-              <Icon source="shield-star" size={18} color={theme.colors.textSecondary} />
-              <Text style={styles.detailText}>{player.position}</Text>
+              <Icon source="shield-star" size={18} color={paperTheme.colors.onSurfaceVariant} />
+              <Text style={[styles.detailText, { color: paperTheme.colors.onSurfaceVariant }]}>
+                {player.position}
+              </Text>
             </View>
             <View style={styles.detailItem}>
-              <Icon source="account-group" size={18} color={theme.colors.textSecondary} />
-              <Text style={styles.detailText}>{teamName}</Text>
+              <Icon source="account-group" size={18} color={paperTheme.colors.onSurfaceVariant} />
+              <Text style={[styles.detailText, { color: paperTheme.colors.onSurfaceVariant }]}>
+                {teamName}
+              </Text>
             </View>
           </View>
         </View>
@@ -82,7 +99,9 @@ export const PlayerDetailScreen: React.FC = () => {
 
       {/* Player Information Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Player Information</Text>
+        <Text style={[styles.sectionTitle, { color: paperTheme.colors.onBackground }]}>
+          Player Information
+        </Text>
         <View style={styles.statsGrid}>
           <StatCard label="Age" value={age} subtitle="years" />
           <StatCard label="Height" value={player.height} />
@@ -104,7 +123,9 @@ export const PlayerDetailScreen: React.FC = () => {
       {stats && (
         <>
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Batting Statistics</Text>
+            <Text style={[styles.sectionTitle, { color: paperTheme.colors.onBackground }]}>
+              Batting Statistics
+            </Text>
             <View style={styles.statsGrid}>
               <StatCard
                 label="AVG"
@@ -148,7 +169,9 @@ export const PlayerDetailScreen: React.FC = () => {
             stats.losses !== undefined &&
             stats.inningsPitched !== undefined && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Pitching Statistics</Text>
+                <Text style={[styles.sectionTitle, { color: paperTheme.colors.onBackground }]}>
+                  Pitching Statistics
+                </Text>
                 <View style={styles.statsGrid}>
                   <StatCard
                     label="ERA"
@@ -184,7 +207,6 @@ export const PlayerDetailScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
   },
   scrollContent: {
     padding: theme.spacing.md,
@@ -192,18 +214,15 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.card,
     padding: theme.spacing.md,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
     marginBottom: theme.spacing.md,
+    elevation: 3,
   },
   numberBadge: {
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: theme.colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: theme.spacing.md,
@@ -211,7 +230,6 @@ const styles = StyleSheet.create({
   numberText: {
     fontSize: theme.typography.fontSize.xl,
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.background,
   },
   headerInfo: {
     flex: 1,
@@ -219,7 +237,6 @@ const styles = StyleSheet.create({
   playerName: {
     fontSize: theme.typography.fontSize.xl,
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text,
     marginBottom: theme.spacing.xs,
   },
   headerDetails: {
@@ -234,7 +251,6 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.textSecondary,
   },
   section: {
     marginBottom: theme.spacing.md,
@@ -242,7 +258,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: theme.typography.fontSize.lg,
     fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text,
     marginBottom: theme.spacing.sm,
   },
   statsGrid: {
@@ -260,13 +275,11 @@ const styles = StyleSheet.create({
   notFoundTitle: {
     fontSize: theme.typography.fontSize.xl,
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text,
     marginTop: theme.spacing.md,
     marginBottom: theme.spacing.sm,
   },
   notFoundSubtitle: {
     fontSize: theme.typography.fontSize.md,
-    color: theme.colors.textSecondary,
     textAlign: 'center',
   },
 });

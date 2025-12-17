@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { IconButton, Icon } from 'react-native-paper';
+import { IconButton, Icon, useTheme } from 'react-native-paper';
+import type { MD3Theme } from 'react-native-paper';
 import { theme } from '../theme';
 
 // Icon constants for consistent usage
@@ -19,28 +20,36 @@ interface PlayerRowProps {
 }
 
 export const PlayerRow: React.FC<PlayerRowProps> = ({ name, position, team, number, onPress }) => {
+  const paperTheme = useTheme<MD3Theme>();
+
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
-      <View style={styles.numberContainer}>
-        <Text style={styles.number}>#{number}</Text>
+    <TouchableOpacity
+      style={[styles.container, { backgroundColor: paperTheme.colors.surface }]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <View style={[styles.numberContainer, { backgroundColor: paperTheme.colors.primary }]}>
+        <Text style={[styles.number, { color: paperTheme.colors.onPrimary }]}>#{number}</Text>
       </View>
       <View style={styles.infoContainer}>
-        <Text style={styles.name}>{name}</Text>
+        <Text style={[styles.name, { color: paperTheme.colors.onSurface }]}>{name}</Text>
         <View style={styles.detailsRow}>
           <View style={styles.detailItem}>
-            <Icon source={ICONS.POSITION} size={16} color={theme.colors.textSecondary} />
-            <Text style={styles.position}>{position}</Text>
+            <Icon source={ICONS.POSITION} size={16} color={paperTheme.colors.onSurfaceVariant} />
+            <Text style={[styles.position, { color: paperTheme.colors.onSurfaceVariant }]}>
+              {position}
+            </Text>
           </View>
           <View style={styles.detailItem}>
-            <Icon source={ICONS.TEAM} size={16} color={theme.colors.textSecondary} />
-            <Text style={styles.team}>{team}</Text>
+            <Icon source={ICONS.TEAM} size={16} color={paperTheme.colors.onSurfaceVariant} />
+            <Text style={[styles.team, { color: paperTheme.colors.onSurfaceVariant }]}>{team}</Text>
           </View>
         </View>
       </View>
       <IconButton
         icon={ICONS.CHEVRON}
         size={24}
-        iconColor={theme.colors.textSecondary}
+        iconColor={paperTheme.colors.onSurfaceVariant}
         style={styles.chevron}
       />
     </TouchableOpacity>
@@ -51,18 +60,15 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.card,
     padding: theme.spacing.md,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
     marginBottom: theme.spacing.sm,
+    elevation: 2,
   },
   numberContainer: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: theme.colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: theme.spacing.md,
@@ -70,7 +76,6 @@ const styles = StyleSheet.create({
   number: {
     fontSize: theme.typography.fontSize.md,
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.background,
   },
   infoContainer: {
     flex: 1,
@@ -78,7 +83,6 @@ const styles = StyleSheet.create({
   name: {
     fontSize: theme.typography.fontSize.md,
     fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text,
     marginBottom: theme.spacing.xs,
   },
   detailsRow: {
@@ -93,11 +97,9 @@ const styles = StyleSheet.create({
   },
   position: {
     fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.textSecondary,
   },
   team: {
     fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.textSecondary,
   },
   chevron: {
     margin: 0,

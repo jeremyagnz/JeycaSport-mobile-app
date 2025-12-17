@@ -1,5 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
+import { useTheme } from 'react-native-paper';
+import type { MD3Theme } from 'react-native-paper';
 import { theme } from '../theme';
 import type { Team } from '../models/Team';
 import { mockTeams } from '../constants/mockData';
@@ -10,29 +12,39 @@ interface TeamRowProps {
 }
 
 const TeamRow: React.FC<TeamRowProps> = ({ team, onPress }) => {
+  const paperTheme = useTheme<MD3Theme>();
   const record = team.statistics ? `${team.statistics.wins}-${team.statistics.losses}` : 'N/A';
 
   return (
-    <TouchableOpacity style={styles.teamRow} onPress={onPress} activeOpacity={0.7}>
-      <View style={styles.logoContainer}>
-        <Text style={styles.logoText}>{team.abbreviation}</Text>
+    <TouchableOpacity
+      style={[styles.teamRow, { backgroundColor: paperTheme.colors.surface }]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <View style={[styles.logoContainer, { backgroundColor: paperTheme.colors.primary }]}>
+        <Text style={[styles.logoText, { color: paperTheme.colors.onPrimary }]}>
+          {team.abbreviation}
+        </Text>
       </View>
       <View style={styles.teamInfo}>
-        <Text style={styles.teamName}>{team.name}</Text>
-        <Text style={styles.teamRecord}>Record: {record}</Text>
+        <Text style={[styles.teamName, { color: paperTheme.colors.onSurface }]}>{team.name}</Text>
+        <Text style={[styles.teamRecord, { color: paperTheme.colors.onSurfaceVariant }]}>
+          Record: {record}
+        </Text>
       </View>
     </TouchableOpacity>
   );
 };
 
 export const TeamsScreen: React.FC = () => {
+  const paperTheme = useTheme<MD3Theme>();
+
   const handleTeamPress = (teamId: string) => {
-    // TODO: Navigate to team detail screen
     console.log(`Team ${teamId} pressed`);
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: paperTheme.colors.background }]}>
       <FlatList
         data={mockTeams}
         keyExtractor={(item) => item.id}
@@ -47,7 +59,6 @@ export const TeamsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
   },
   listContent: {
     padding: theme.spacing.md,
@@ -55,18 +66,15 @@ const styles = StyleSheet.create({
   teamRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.card,
     padding: theme.spacing.md,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
     marginBottom: theme.spacing.sm,
+    elevation: 2,
   },
   logoContainer: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: theme.colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: theme.spacing.md,
@@ -74,7 +82,6 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: theme.typography.fontSize.sm,
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.background,
   },
   teamInfo: {
     flex: 1,
@@ -82,11 +89,9 @@ const styles = StyleSheet.create({
   teamName: {
     fontSize: theme.typography.fontSize.md,
     fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text,
     marginBottom: theme.spacing.xs,
   },
   teamRecord: {
     fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.textSecondary,
   },
 });

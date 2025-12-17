@@ -2,6 +2,8 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackNavigationOptions } from '@react-navigation/native-stack';
+import { useTheme } from 'react-native-paper';
+import type { MD3Theme } from 'react-native-paper';
 import { theme } from '../theme';
 import {
   HomeScreen,
@@ -15,29 +17,28 @@ import type { RootStackParamList } from './types';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 /**
- * Default header styles using the global theme
- * Mobile optimized with consistent styling across all screens
- */
-const defaultScreenOptions: NativeStackNavigationOptions = {
-  headerStyle: {
-    backgroundColor: theme.colors.primary,
-  },
-  headerTintColor: theme.colors.background,
-  headerTitleStyle: {
-    fontWeight: theme.typography.fontWeight.bold,
-    fontSize: theme.typography.fontSize.lg,
-  },
-  animation: 'slide_from_right',
-  contentStyle: {
-    backgroundColor: theme.colors.background,
-  },
-};
-
-/**
  * AppNavigator - Main navigation component for the app
  * Stack navigator with 5 screens: Home, Teams, Players, PlayerDetail, Stats
+ * Automatically adapts to system theme preference
  */
 export const AppNavigator: React.FC = () => {
+  const paperTheme = useTheme<MD3Theme>();
+
+  const defaultScreenOptions: NativeStackNavigationOptions = {
+    headerStyle: {
+      backgroundColor: paperTheme.colors.primary,
+    },
+    headerTintColor: paperTheme.colors.onPrimary,
+    headerTitleStyle: {
+      fontWeight: theme.typography.fontWeight.bold,
+      fontSize: theme.typography.fontSize.lg,
+    },
+    animation: 'slide_from_right',
+    contentStyle: {
+      backgroundColor: paperTheme.colors.background,
+    },
+  };
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home" screenOptions={defaultScreenOptions}>

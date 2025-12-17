@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
-import { Card, Title, Paragraph, IconButton } from 'react-native-paper';
+import { StyleSheet, View, ScrollView, useColorScheme } from 'react-native';
+import { Card, Title, Paragraph, IconButton, useTheme } from 'react-native-paper';
+import type { MD3Theme } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -17,14 +18,22 @@ interface NavigationCardProps {
 }
 
 const NavigationCard: React.FC<NavigationCardProps> = ({ title, description, icon, onPress }) => {
+  const paperTheme = useTheme<MD3Theme>();
+
   return (
-    <Card style={styles.card} onPress={onPress}>
+    <Card style={[styles.card, { backgroundColor: paperTheme.colors.surface }]} onPress={onPress}>
       <Card.Content style={styles.cardContent}>
         <View style={styles.cardHeader}>
-          <IconButton icon={icon} size={40} iconColor={theme.colors.primary} />
+          <IconButton icon={icon} size={40} iconColor={paperTheme.colors.primary} />
           <View style={styles.cardTextContainer}>
-            <Title style={styles.cardTitle}>{title}</Title>
-            <Paragraph style={styles.cardDescription}>{description}</Paragraph>
+            <Title style={[styles.cardTitle, { color: paperTheme.colors.onSurface }]}>
+              {title}
+            </Title>
+            <Paragraph
+              style={[styles.cardDescription, { color: paperTheme.colors.onSurfaceVariant }]}
+            >
+              {description}
+            </Paragraph>
           </View>
         </View>
       </Card.Content>
@@ -34,12 +43,19 @@ const NavigationCard: React.FC<NavigationCardProps> = ({ title, description, ico
 
 export const HomeScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
+  const paperTheme = useTheme<MD3Theme>();
+  const colorScheme = useColorScheme();
 
   return (
-    <ScrollView style={styles.scrollView} contentContainerStyle={styles.container}>
+    <ScrollView
+      style={[styles.scrollView, { backgroundColor: paperTheme.colors.background }]}
+      contentContainerStyle={styles.container}
+    >
       <View style={styles.header}>
-        <Title style={styles.title}>Welcome to JeycaSports</Title>
-        <Paragraph style={styles.subtitle}>
+        <Title style={[styles.title, { color: paperTheme.colors.primary }]}>
+          Welcome to JeycaSports
+        </Title>
+        <Paragraph style={[styles.subtitle, { color: paperTheme.colors.onSurfaceVariant }]}>
           Your complete baseball statistics tracking application
         </Paragraph>
       </View>
@@ -65,7 +81,7 @@ export const HomeScreen: React.FC = () => {
         />
       </View>
 
-      <StatusBar style="light" />
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
     </ScrollView>
   );
 };
@@ -73,7 +89,6 @@ export const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
-    backgroundColor: theme.colors.background,
   },
   container: {
     padding: theme.spacing.lg,
@@ -85,13 +100,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: theme.typography.fontSize.xxl,
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.primary,
     marginBottom: theme.spacing.sm,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: theme.typography.fontSize.md,
-    color: theme.colors.textSecondary,
     textAlign: 'center',
     paddingHorizontal: theme.spacing.md,
   },
@@ -99,9 +112,6 @@ const styles = StyleSheet.create({
     gap: theme.spacing.md,
   },
   card: {
-    backgroundColor: theme.colors.card,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
     elevation: 2,
   },
   cardContent: {
@@ -118,11 +128,9 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: theme.typography.fontSize.lg,
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text,
     marginBottom: theme.spacing.xs,
   },
   cardDescription: {
     fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.textSecondary,
   },
 });

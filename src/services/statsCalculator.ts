@@ -48,10 +48,7 @@ export const calculateSluggingPercentage = (
  * Calculate on-base plus slugging (OPS)
  * Formula: OBP + SLG
  */
-export const calculateOPS = (
-  onBasePercentage: number,
-  sluggingPercentage: number
-): number => {
+export const calculateOPS = (onBasePercentage: number, sluggingPercentage: number): number => {
   return Number((onBasePercentage + sluggingPercentage).toFixed(3));
 };
 
