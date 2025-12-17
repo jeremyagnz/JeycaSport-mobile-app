@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { StyleSheet, View, FlatList, TextInput, Text } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IconButton, useTheme } from 'react-native-paper';
 import type { MD3Theme } from 'react-native-paper';
@@ -9,40 +9,56 @@ import { theme } from '../theme';
 import type { Player } from '../models/Player';
 import type { RootStackParamList } from '../navigation/types';
 import { mockPlayers, teamNames } from '../constants/mockData';
+import { loadData } from '../services/storage';
+import { STORAGE_KEYS } from '../services/storage';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
-// Pre-compute lowercase values for efficient searching
-const searchablePlayersData = mockPlayers.map((player) => ({
-  player,
-  searchText: `${player.name} ${player.position} ${teamNames[player.teamId] || ''}`.toLowerCase(),
-}));
-
-// Validate data consistency on component mount
-const invalidPlayers = mockPlayers.filter((player) => !teamNames[player.teamId]);
-if (invalidPlayers.length > 0) {
-  console.warn(
-    `Found ${invalidPlayers.length} player(s) with invalid team IDs:`,
-    invalidPlayers.map((p) => ({ id: p.id, name: p.name, teamId: p.teamId }))
-  );
-}
 
 export const PlayersScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const paperTheme = useTheme<MD3Theme>();
   const [searchQuery, setSearchQuery] = useState('');
+  const [players, setPlayers] = useState<Player[]>(mockPlayers);
+
+  const loadPlayers = async () => {
+    try {
+      const storedPlayers = await loadData<Player[]>(STORAGE_KEYS.PLAYERS);
+      if (storedPlayers && storedPlayers.length > 0) {
+        setPlayers(storedPlayers);
+      } else {
+        // Use mock players if no stored players
+        setPlayers(mockPlayers);
+      }
+    } catch (error) {
+      console.error('Error loading players:', error);
+      setPlayers(mockPlayers);
+    }
+  };
+
+  useEffect(() => {
+    loadPlayers();
+  }, []);
+
+  // Reload players when screen comes into focus (after returning from admin panel)
+  useFocusEffect(
+    React.useCallback(() => {
+      loadPlayers();
+    }, [])
+  );
 
   // Filter players based on search query
   const filteredPlayers = useMemo(() => {
     if (!searchQuery.trim()) {
-      return mockPlayers;
+      return players;
     }
 
     const query = searchQuery.toLowerCase();
-    return searchablePlayersData
-      .filter((item) => item.searchText.includes(query))
-      .map((item) => item.player);
-  }, [searchQuery]);
+    return players.filter((player) => {
+      const searchText =
+        `${player.name} ${player.position} ${teamNames[player.teamId] || ''}`.toLowerCase();
+      return searchText.includes(query);
+    });
+  }, [searchQuery, players]);
 
   // Handle player press
   const handlePlayerPress = useCallback(

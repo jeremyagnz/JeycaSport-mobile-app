@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MD3Theme } from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/native';
 import { theme } from '../theme';
 import type { Team } from '../models/Team';
 import { mockTeams } from '../constants/mockData';
+import { loadData } from '../services/storage';
+import { STORAGE_KEYS } from '../services/storage';
 
 interface TeamRowProps {
-  team: Pick<Team, 'id' | 'name' | 'abbreviation' | 'statistics'>;
+  team: Team | Pick<Team, 'id' | 'name' | 'abbreviation' | 'statistics'>;
   onPress?: () => void;
 }
 
@@ -38,6 +41,34 @@ const TeamRow: React.FC<TeamRowProps> = ({ team, onPress }) => {
 
 export const TeamsScreen: React.FC = () => {
   const paperTheme = useTheme<MD3Theme>();
+  const [teams, setTeams] =
+    useState<(Team | Pick<Team, 'id' | 'name' | 'abbreviation' | 'statistics'>)[]>(mockTeams);
+
+  const loadTeams = async () => {
+    try {
+      const storedTeams = await loadData<Team[]>(STORAGE_KEYS.TEAMS);
+      if (storedTeams && storedTeams.length > 0) {
+        setTeams(storedTeams);
+      } else {
+        // Use mock teams if no stored teams
+        setTeams(mockTeams);
+      }
+    } catch (error) {
+      console.error('Error loading teams:', error);
+      setTeams(mockTeams);
+    }
+  };
+
+  useEffect(() => {
+    loadTeams();
+  }, []);
+
+  // Reload teams when screen comes into focus (after returning from admin panel)
+  useFocusEffect(
+    React.useCallback(() => {
+      loadTeams();
+    }, [])
+  );
 
   const handleTeamPress = (teamId: string) => {
     console.log(`Team ${teamId} pressed`);
@@ -46,7 +77,7 @@ export const TeamsScreen: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: paperTheme.colors.background }]}>
       <FlatList
-        data={mockTeams}
+        data={teams}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <TeamRow team={item} onPress={() => handleTeamPress(item.id)} />}
         contentContainerStyle={styles.listContent}

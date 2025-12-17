@@ -8,6 +8,14 @@ export type RootStackParamList = {
   Players: undefined;
   PlayerDetail: { playerId: string };
   Stats: undefined;
+  AdminLogin: undefined;
+  AdminDashboard: undefined;
+  AdminPlayers: undefined;
+  AdminEditPlayer: { playerId: string | undefined };
+  AdminTeams: undefined;
+  AdminEditTeam: { teamId: string | undefined };
+  AdminStats: undefined;
+  AdminEditStats: { entityId: string; entityType: 'player' | 'team' };
 };
 
 // Type helpers for navigation props
