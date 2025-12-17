@@ -97,13 +97,14 @@ export const AdminEditPlayerScreen: React.FC = () => {
       }
 
       await saveData(STORAGE_KEYS.PLAYERS, updatedPlayers);
+      setIsLoading(false);
       Alert.alert('Success', `Player ${isEditing ? 'updated' : 'created'} successfully`, [
         { text: 'OK', onPress: () => navigation.goBack() },
       ]);
-    } catch {
-      Alert.alert('Error', 'Failed to save player');
-    } finally {
+    } catch (error) {
       setIsLoading(false);
+      console.error('Error saving player:', error);
+      Alert.alert('Error', 'Failed to save player. Please try again.');
     }
   };
 

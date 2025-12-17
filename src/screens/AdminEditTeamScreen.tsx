@@ -100,13 +100,14 @@ export const AdminEditTeamScreen: React.FC = () => {
       }
 
       await saveData(STORAGE_KEYS.TEAMS, updatedTeams);
+      setIsLoading(false);
       Alert.alert('Success', `Team ${isEditing ? 'updated' : 'created'} successfully`, [
         { text: 'OK', onPress: () => navigation.goBack() },
       ]);
-    } catch {
-      Alert.alert('Error', 'Failed to save team');
-    } finally {
+    } catch (error) {
       setIsLoading(false);
+      console.error('Error saving team:', error);
+      Alert.alert('Error', 'Failed to save team. Please try again.');
     }
   };
 
