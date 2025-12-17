@@ -147,7 +147,9 @@ export const StatsScreen: React.FC = () => {
   const renderHeader = () => (
     <View style={[styles.tableHeader, { backgroundColor: paperTheme.colors.background }]}>
       <Text style={[styles.headerRank, { color: paperTheme.colors.onSurfaceVariant }]}>Rank</Text>
-      <Text style={[styles.headerPlayer, { color: paperTheme.colors.onSurfaceVariant }]}>Player</Text>
+      <Text style={[styles.headerPlayer, { color: paperTheme.colors.onSurfaceVariant }]}>
+        Player
+      </Text>
       <Text style={[styles.headerStat, { color: paperTheme.colors.onSurfaceVariant }]}>
         {selectedCategory}
       </Text>
@@ -158,7 +160,9 @@ export const StatsScreen: React.FC = () => {
     <View style={[styles.container, { backgroundColor: paperTheme.colors.background }]}>
       {/* Title */}
       <View style={styles.titleContainer}>
-        <Text style={[styles.title, { color: paperTheme.colors.onBackground }]}>League Leaders</Text>
+        <Text style={[styles.title, { color: paperTheme.colors.onBackground }]}>
+          League Leaders
+        </Text>
         <Text style={[styles.subtitle, { color: paperTheme.colors.onSurfaceVariant }]}>
           Top performers by statistical category
         </Text>

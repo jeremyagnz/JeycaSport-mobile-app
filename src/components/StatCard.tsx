@@ -18,7 +18,9 @@ export const StatCard: React.FC<StatCardProps> = ({ label, value, subtitle }) =>
       <Text style={[styles.label, { color: paperTheme.colors.onSurfaceVariant }]}>{label}</Text>
       <Text style={[styles.value, { color: paperTheme.colors.onSurface }]}>{value}</Text>
       {subtitle && (
-        <Text style={[styles.subtitle, { color: paperTheme.colors.onSurfaceVariant }]}>{subtitle}</Text>
+        <Text style={[styles.subtitle, { color: paperTheme.colors.onSurfaceVariant }]}>
+          {subtitle}
+        </Text>
       )}
     </View>
   );

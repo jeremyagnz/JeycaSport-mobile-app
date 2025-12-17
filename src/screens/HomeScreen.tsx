@@ -26,8 +26,12 @@ const NavigationCard: React.FC<NavigationCardProps> = ({ title, description, ico
         <View style={styles.cardHeader}>
           <IconButton icon={icon} size={40} iconColor={paperTheme.colors.primary} />
           <View style={styles.cardTextContainer}>
-            <Title style={[styles.cardTitle, { color: paperTheme.colors.onSurface }]}>{title}</Title>
-            <Paragraph style={[styles.cardDescription, { color: paperTheme.colors.onSurfaceVariant }]}>
+            <Title style={[styles.cardTitle, { color: paperTheme.colors.onSurface }]}>
+              {title}
+            </Title>
+            <Paragraph
+              style={[styles.cardDescription, { color: paperTheme.colors.onSurfaceVariant }]}
+            >
               {description}
             </Paragraph>
           </View>

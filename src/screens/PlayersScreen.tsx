@@ -73,7 +73,11 @@ export const PlayersScreen: React.FC = () => {
   const renderEmptyList = useCallback(
     () => (
       <View style={styles.emptyContainer}>
-        <IconButton icon="account-search" size={64} iconColor={paperTheme.colors.onSurfaceVariant} />
+        <IconButton
+          icon="account-search"
+          size={64}
+          iconColor={paperTheme.colors.onSurfaceVariant}
+        />
         <Text style={[styles.emptyTitle, { color: paperTheme.colors.onSurface }]}>
           No players found
         </Text>
