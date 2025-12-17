@@ -3,6 +3,7 @@ import { useColorScheme } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { AppNavigator } from './src/navigation';
 import { lightTheme, darkTheme } from './src/theme';
+import { AuthProvider } from './src/contexts';
 
 export default function App() {
   const colorScheme = useColorScheme();
@@ -10,7 +11,9 @@ export default function App() {
 
   return (
     <PaperProvider theme={theme}>
-      <AppNavigator />
+      <AuthProvider>
+        <AppNavigator />
+      </AuthProvider>
     </PaperProvider>
   );
 }

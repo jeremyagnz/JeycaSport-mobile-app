@@ -1,23 +1,23 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, useColorScheme } from 'react-native';
-import { Card, Title, Paragraph, IconButton, useTheme } from 'react-native-paper';
+import { StyleSheet, View, ScrollView, Alert } from 'react-native';
+import { Card, Title, Paragraph, IconButton, Button, useTheme } from 'react-native-paper';
 import type { MD3Theme } from 'react-native-paper';
-import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../navigation/types';
+import { useAuth } from '../contexts';
 import { theme } from '../theme';
+import type { RootStackParamList } from '../navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-interface NavigationCardProps {
+interface AdminCardProps {
   title: string;
   description: string;
   icon: string;
   onPress: () => void;
 }
 
-const NavigationCard: React.FC<NavigationCardProps> = ({ title, description, icon, onPress }) => {
+const AdminCard: React.FC<AdminCardProps> = ({ title, description, icon, onPress }) => {
   const paperTheme = useTheme<MD3Theme>();
 
   return (
@@ -41,10 +41,24 @@ const NavigationCard: React.FC<NavigationCardProps> = ({ title, description, ico
   );
 };
 
-export const HomeScreen: React.FC = () => {
+export const AdminDashboardScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const paperTheme = useTheme<MD3Theme>();
-  const colorScheme = useColorScheme();
+  const { admin, logout } = useAuth();
+
+  const handleLogout = () => {
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: async () => {
+          await logout();
+          navigation.navigate('Home');
+        },
+      },
+    ]);
+  };
 
   return (
     <ScrollView
@@ -52,42 +66,46 @@ export const HomeScreen: React.FC = () => {
       contentContainerStyle={styles.container}
     >
       <View style={styles.header}>
-        <Title style={[styles.title, { color: paperTheme.colors.primary }]}>
-          Welcome to JeycaSports
-        </Title>
+        <Title style={[styles.title, { color: paperTheme.colors.primary }]}>Admin Dashboard</Title>
         <Paragraph style={[styles.subtitle, { color: paperTheme.colors.onSurfaceVariant }]}>
-          Your complete baseball statistics tracking application
+          Welcome, {admin?.username || 'Admin'}
         </Paragraph>
       </View>
 
       <View style={styles.cardsContainer}>
-        <NavigationCard
-          title="Teams"
-          description="View and manage baseball teams"
-          icon="shield-star"
-          onPress={() => navigation.navigate('Teams')}
-        />
-        <NavigationCard
-          title="Players"
-          description="Browse player profiles and stats"
+        <AdminCard
+          title="Manage Players"
+          description="Create, edit, and delete player profiles"
           icon="account-group"
-          onPress={() => navigation.navigate('Players')}
+          onPress={() => navigation.navigate('AdminPlayers')}
         />
-        <NavigationCard
-          title="Statistics"
-          description="Analyze team and player performance"
+        <AdminCard
+          title="Manage Teams"
+          description="Create, edit, and delete team information"
+          icon="shield-star"
+          onPress={() => navigation.navigate('AdminTeams')}
+        />
+        <AdminCard
+          title="Manage Statistics"
+          description="Update player and team statistics"
           icon="chart-bar"
-          onPress={() => navigation.navigate('Stats')}
-        />
-        <NavigationCard
-          title="Admin Panel"
-          description="Manage players, teams, and statistics"
-          icon="shield-account"
-          onPress={() => navigation.navigate('AdminLogin')}
+          onPress={() => navigation.navigate('AdminStats')}
         />
       </View>
 
-      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+      <View style={styles.actions}>
+        <Button mode="outlined" onPress={() => navigation.navigate('Home')} style={styles.button}>
+          Back to Home
+        </Button>
+        <Button
+          mode="contained"
+          onPress={handleLogout}
+          style={styles.button}
+          buttonColor={paperTheme.colors.error}
+        >
+          Logout
+        </Button>
+      </View>
     </ScrollView>
   );
 };
@@ -116,6 +134,7 @@ const styles = StyleSheet.create({
   },
   cardsContainer: {
     gap: theme.spacing.md,
+    marginBottom: theme.spacing.xl,
   },
   card: {
     elevation: 2,
@@ -138,5 +157,11 @@ const styles = StyleSheet.create({
   },
   cardDescription: {
     fontSize: theme.typography.fontSize.sm,
+  },
+  actions: {
+    gap: theme.spacing.md,
+  },
+  button: {
+    paddingVertical: theme.spacing.xs,
   },
 });

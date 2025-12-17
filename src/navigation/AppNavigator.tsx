@@ -11,6 +11,14 @@ import {
   PlayersScreen,
   PlayerDetailScreen,
   StatsScreen,
+  AdminLoginScreen,
+  AdminDashboardScreen,
+  AdminPlayersScreen,
+  AdminEditPlayerScreen,
+  AdminTeamsScreen,
+  AdminEditTeamScreen,
+  AdminStatsScreen,
+  AdminEditStatsScreen,
 } from '../screens';
 import type { RootStackParamList } from './types';
 
@@ -76,6 +84,62 @@ export const AppNavigator: React.FC = () => {
           component={StatsScreen}
           options={{
             title: 'Statistics',
+          }}
+        />
+        <Stack.Screen
+          name="AdminLogin"
+          component={AdminLoginScreen}
+          options={{
+            title: 'Admin Login',
+          }}
+        />
+        <Stack.Screen
+          name="AdminDashboard"
+          component={AdminDashboardScreen}
+          options={{
+            title: 'Admin Dashboard',
+          }}
+        />
+        <Stack.Screen
+          name="AdminPlayers"
+          component={AdminPlayersScreen}
+          options={{
+            title: 'Manage Players',
+          }}
+        />
+        <Stack.Screen
+          name="AdminEditPlayer"
+          component={AdminEditPlayerScreen}
+          options={{
+            title: 'Edit Player',
+          }}
+        />
+        <Stack.Screen
+          name="AdminTeams"
+          component={AdminTeamsScreen}
+          options={{
+            title: 'Manage Teams',
+          }}
+        />
+        <Stack.Screen
+          name="AdminEditTeam"
+          component={AdminEditTeamScreen}
+          options={{
+            title: 'Edit Team',
+          }}
+        />
+        <Stack.Screen
+          name="AdminStats"
+          component={AdminStatsScreen}
+          options={{
+            title: 'Manage Statistics',
+          }}
+        />
+        <Stack.Screen
+          name="AdminEditStats"
+          component={AdminEditStatsScreen}
+          options={{
+            title: 'Edit Statistics',
           }}
         />
       </Stack.Navigator>
