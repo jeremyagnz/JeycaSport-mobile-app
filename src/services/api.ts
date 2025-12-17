@@ -3,6 +3,9 @@
  * Provides functions to interact with baseball statistics API
  */
 
+import type { Player, PlayerStatistics } from '../models/Player';
+import type { Team, TeamStatistics } from '../models/Team';
+
 // Base API configuration
 const API_BASE_URL = process.env.API_BASE_URL || 'https://api.example.com';
 const API_TIMEOUT = 10000; // 10 seconds
@@ -65,7 +68,7 @@ const handleResponse = async <T>(response: Response): Promise<ApiResponse<T>> =>
 /**
  * Fetch all teams
  */
-export const fetchTeams = async (): Promise<ApiResponse<unknown[]>> => {
+export const fetchTeams = async (): Promise<ApiResponse<Team[]>> => {
   try {
     const response = await fetchWithTimeout(`${API_BASE_URL}/teams`);
     return handleResponse(response);
@@ -78,7 +81,7 @@ export const fetchTeams = async (): Promise<ApiResponse<unknown[]>> => {
 /**
  * Fetch all players
  */
-export const fetchPlayers = async (teamId?: string): Promise<ApiResponse<unknown[]>> => {
+export const fetchPlayers = async (teamId?: string): Promise<ApiResponse<Player[]>> => {
   try {
     const url = teamId ? `${API_BASE_URL}/players?teamId=${teamId}` : `${API_BASE_URL}/players`;
     const response = await fetchWithTimeout(url);
@@ -92,7 +95,7 @@ export const fetchPlayers = async (teamId?: string): Promise<ApiResponse<unknown
 /**
  * Fetch player details by ID
  */
-export const fetchPlayerById = async (playerId: string): Promise<ApiResponse<unknown>> => {
+export const fetchPlayerById = async (playerId: string): Promise<ApiResponse<Player>> => {
   try {
     const response = await fetchWithTimeout(`${API_BASE_URL}/players/${playerId}`);
     return handleResponse(response);
@@ -105,7 +108,9 @@ export const fetchPlayerById = async (playerId: string): Promise<ApiResponse<unk
 /**
  * Fetch player statistics
  */
-export const fetchPlayerStats = async (playerId: string): Promise<ApiResponse<unknown>> => {
+export const fetchPlayerStats = async (
+  playerId: string
+): Promise<ApiResponse<PlayerStatistics>> => {
   try {
     const response = await fetchWithTimeout(`${API_BASE_URL}/players/${playerId}/stats`);
     return handleResponse(response);
@@ -118,7 +123,7 @@ export const fetchPlayerStats = async (playerId: string): Promise<ApiResponse<un
 /**
  * Fetch team statistics
  */
-export const fetchTeamStats = async (teamId: string): Promise<ApiResponse<unknown>> => {
+export const fetchTeamStats = async (teamId: string): Promise<ApiResponse<TeamStatistics>> => {
   try {
     const response = await fetchWithTimeout(`${API_BASE_URL}/teams/${teamId}/stats`);
     return handleResponse(response);
