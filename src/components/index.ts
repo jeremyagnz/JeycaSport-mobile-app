@@ -2,3 +2,4 @@
 export { StatCard } from './StatCard';
 export { PlayerRow } from './PlayerRow';
 export { Chart } from './Chart';
+export { PerformanceChart } from './PerformanceChart';
