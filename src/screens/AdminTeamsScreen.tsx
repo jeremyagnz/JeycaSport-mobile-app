@@ -12,6 +12,9 @@ import { STORAGE_KEYS } from '../services/storage';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
+// Delay to ensure previous Alert is dismissed before showing the next one
+const ALERT_DISMISS_DELAY = 100;
+
 export const AdminTeamsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const paperTheme = useTheme<MD3Theme>();
@@ -65,13 +68,13 @@ export const AdminTeamsScreen: React.FC = () => {
             // Use setTimeout to ensure the previous Alert is dismissed before showing the next one
             setTimeout(() => {
               Alert.alert('Success', `${teamName} has been deleted successfully`);
-            }, 100);
+            }, ALERT_DISMISS_DELAY);
           } catch (error) {
             setIsDeleting(false);
             console.error('Error deleting team:', error);
             setTimeout(() => {
               Alert.alert('Error', 'Failed to delete team. Please try again.');
-            }, 100);
+            }, ALERT_DISMISS_DELAY);
           }
         },
       },
