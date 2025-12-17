@@ -63,12 +63,17 @@ export const AdminPlayersScreen: React.FC = () => {
             const updatedPlayers = players.filter((p) => p.id !== playerId);
             await saveData(STORAGE_KEYS.PLAYERS, updatedPlayers);
             setPlayers(updatedPlayers);
-            Alert.alert('Success', `${playerName} has been deleted successfully`);
-          } catch (error) {
-            Alert.alert('Error', 'Failed to delete player. Please try again.');
-            console.error('Error deleting player:', error);
-          } finally {
             setIsDeleting(false);
+            // Use setTimeout to ensure the previous Alert is dismissed before showing the next one
+            setTimeout(() => {
+              Alert.alert('Success', `${playerName} has been deleted successfully`);
+            }, 100);
+          } catch (error) {
+            setIsDeleting(false);
+            console.error('Error deleting player:', error);
+            setTimeout(() => {
+              Alert.alert('Error', 'Failed to delete player. Please try again.');
+            }, 100);
           }
         },
       },

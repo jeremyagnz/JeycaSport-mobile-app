@@ -61,12 +61,17 @@ export const AdminTeamsScreen: React.FC = () => {
             const updatedTeams = teams.filter((t) => t.id !== teamId);
             await saveData(STORAGE_KEYS.TEAMS, updatedTeams);
             setTeams(updatedTeams);
-            Alert.alert('Success', `${teamName} has been deleted successfully`);
-          } catch (error) {
-            Alert.alert('Error', 'Failed to delete team. Please try again.');
-            console.error('Error deleting team:', error);
-          } finally {
             setIsDeleting(false);
+            // Use setTimeout to ensure the previous Alert is dismissed before showing the next one
+            setTimeout(() => {
+              Alert.alert('Success', `${teamName} has been deleted successfully`);
+            }, 100);
+          } catch (error) {
+            setIsDeleting(false);
+            console.error('Error deleting team:', error);
+            setTimeout(() => {
+              Alert.alert('Error', 'Failed to delete team. Please try again.');
+            }, 100);
           }
         },
       },
