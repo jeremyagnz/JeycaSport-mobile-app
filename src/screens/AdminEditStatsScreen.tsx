@@ -152,6 +152,7 @@ export const AdminEditStatsScreen: React.FC = () => {
         await saveData(STORAGE_KEYS.TEAMS, updatedTeams);
       }
 
+      // Reset loading state before showing Alert to ensure responsive UI
       setIsLoading(false);
       Alert.alert('Success', 'Statistics updated successfully', [
         { text: 'OK', onPress: () => navigation.goBack() },

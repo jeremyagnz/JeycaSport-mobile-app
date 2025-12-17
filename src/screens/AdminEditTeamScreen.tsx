@@ -100,6 +100,7 @@ export const AdminEditTeamScreen: React.FC = () => {
       }
 
       await saveData(STORAGE_KEYS.TEAMS, updatedTeams);
+      // Reset loading state before showing Alert to ensure responsive UI
       setIsLoading(false);
       Alert.alert('Success', `Team ${isEditing ? 'updated' : 'created'} successfully`, [
         { text: 'OK', onPress: () => navigation.goBack() },

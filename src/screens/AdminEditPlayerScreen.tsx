@@ -97,6 +97,7 @@ export const AdminEditPlayerScreen: React.FC = () => {
       }
 
       await saveData(STORAGE_KEYS.PLAYERS, updatedPlayers);
+      // Reset loading state before showing Alert to ensure responsive UI
       setIsLoading(false);
       Alert.alert('Success', `Player ${isEditing ? 'updated' : 'created'} successfully`, [
         { text: 'OK', onPress: () => navigation.goBack() },

@@ -13,7 +13,12 @@ import { mockPlayers, teamNames } from '../constants/mockData';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-// Delay to ensure previous Alert is dismissed before showing the next one
+/**
+ * Delay in milliseconds to ensure previous Alert is dismissed before showing the next one.
+ * React Native's Alert component can have timing issues when showing a new Alert
+ * immediately after another is dismissed. This delay prevents UI glitches and ensures
+ * messages are properly displayed across different devices and React Native versions.
+ */
 const ALERT_DISMISS_DELAY = 100;
 
 export const AdminPlayersScreen: React.FC = () => {
@@ -66,6 +71,7 @@ export const AdminPlayersScreen: React.FC = () => {
             const updatedPlayers = players.filter((p) => p.id !== playerId);
             await saveData(STORAGE_KEYS.PLAYERS, updatedPlayers);
             setPlayers(updatedPlayers);
+            // Reset loading state before showing Alert to ensure responsive UI
             setIsDeleting(false);
             // Use setTimeout to ensure the previous Alert is dismissed before showing the next one
             setTimeout(() => {

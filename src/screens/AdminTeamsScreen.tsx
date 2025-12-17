@@ -12,7 +12,12 @@ import { STORAGE_KEYS } from '../services/storage';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-// Delay to ensure previous Alert is dismissed before showing the next one
+/**
+ * Delay in milliseconds to ensure previous Alert is dismissed before showing the next one.
+ * React Native's Alert component can have timing issues when showing a new Alert
+ * immediately after another is dismissed. This delay prevents UI glitches and ensures
+ * messages are properly displayed across different devices and React Native versions.
+ */
 const ALERT_DISMISS_DELAY = 100;
 
 export const AdminTeamsScreen: React.FC = () => {
@@ -64,6 +69,7 @@ export const AdminTeamsScreen: React.FC = () => {
             const updatedTeams = teams.filter((t) => t.id !== teamId);
             await saveData(STORAGE_KEYS.TEAMS, updatedTeams);
             setTeams(updatedTeams);
+            // Reset loading state before showing Alert to ensure responsive UI
             setIsDeleting(false);
             // Use setTimeout to ensure the previous Alert is dismissed before showing the next one
             setTimeout(() => {
