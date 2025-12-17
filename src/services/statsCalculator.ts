@@ -45,12 +45,36 @@ export const calculateSluggingPercentage = (
 };
 
 /**
+ * Calculate on-base plus slugging (OPS)
+ * Formula: OBP + SLG
+ */
+export const calculateOPS = (
+  onBasePercentage: number,
+  sluggingPercentage: number
+): number => {
+  return Number((onBasePercentage + sluggingPercentage).toFixed(3));
+};
+
+/**
  * Calculate earned run average (ERA) for pitchers
  * Formula: (Earned Runs * 9) / Innings Pitched
  */
 export const calculateERA = (earnedRuns: number, inningsPitched: number): number => {
   if (inningsPitched === 0) return 0;
   return Number(((earnedRuns * 9) / inningsPitched).toFixed(2));
+};
+
+/**
+ * Calculate walks plus hits per inning pitched (WHIP)
+ * Formula: (Walks + Hits) / Innings Pitched
+ */
+export const calculateWHIP = (
+  walksAllowed: number,
+  hitsAllowed: number,
+  inningsPitched: number
+): number => {
+  if (inningsPitched === 0) return 0;
+  return Number(((walksAllowed + hitsAllowed) / inningsPitched).toFixed(2));
 };
 
 /**
