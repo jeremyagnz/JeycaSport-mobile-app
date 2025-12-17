@@ -2,7 +2,8 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { StyleSheet, View, FlatList, TextInput, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { IconButton } from 'react-native-paper';
+import { IconButton, useTheme } from 'react-native-paper';
+import type { MD3Theme } from 'react-native-paper';
 import { PlayerRow } from '../components/PlayerRow';
 import { theme } from '../theme';
 import type { Player } from '../models/Player';
@@ -28,6 +29,7 @@ if (invalidPlayers.length > 0) {
 
 export const PlayersScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
+  const paperTheme = useTheme<MD3Theme>();
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filter players based on search query
@@ -71,29 +73,31 @@ export const PlayersScreen: React.FC = () => {
   const renderEmptyList = useCallback(
     () => (
       <View style={styles.emptyContainer}>
-        <IconButton icon="account-search" size={64} iconColor={theme.colors.textSecondary} />
-        <Text style={styles.emptyTitle}>No players found</Text>
-        <Text style={styles.emptySubtitle}>
+        <IconButton icon="account-search" size={64} iconColor={paperTheme.colors.onSurfaceVariant} />
+        <Text style={[styles.emptyTitle, { color: paperTheme.colors.onSurface }]}>
+          No players found
+        </Text>
+        <Text style={[styles.emptySubtitle, { color: paperTheme.colors.onSurfaceVariant }]}>
           Try adjusting your search to find what you're looking for
         </Text>
       </View>
     ),
-    []
+    [paperTheme]
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
+    <View style={[styles.container, { backgroundColor: paperTheme.colors.background }]}>
+      <View style={[styles.searchContainer, { backgroundColor: paperTheme.colors.surface }]}>
         <IconButton
           icon="magnify"
           size={24}
-          iconColor={theme.colors.textSecondary}
+          iconColor={paperTheme.colors.onSurfaceVariant}
           style={styles.searchIcon}
         />
         <TextInput
-          style={styles.searchInput}
+          style={[styles.searchInput, { color: paperTheme.colors.onSurface }]}
           placeholder="Search by name, position, or team..."
-          placeholderTextColor={theme.colors.textSecondary}
+          placeholderTextColor={paperTheme.colors.onSurfaceVariant}
           value={searchQuery}
           onChangeText={setSearchQuery}
           autoCapitalize="none"
@@ -103,7 +107,7 @@ export const PlayersScreen: React.FC = () => {
           <IconButton
             icon="close"
             size={20}
-            iconColor={theme.colors.textSecondary}
+            iconColor={paperTheme.colors.onSurfaceVariant}
             onPress={() => setSearchQuery('')}
             style={styles.clearIcon}
           />
@@ -128,17 +132,14 @@ export const PlayersScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.card,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
     margin: theme.spacing.md,
     paddingHorizontal: theme.spacing.xs,
+    elevation: 2,
   },
   searchIcon: {
     margin: 0,
@@ -147,7 +148,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 48,
     fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text,
     paddingHorizontal: theme.spacing.xs,
   },
   clearIcon: {
@@ -165,13 +165,11 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: theme.typography.fontSize.lg,
     fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text,
     marginTop: theme.spacing.md,
     marginBottom: theme.spacing.xs,
   },
   emptySubtitle: {
     fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.textSecondary,
     textAlign: 'center',
     paddingHorizontal: theme.spacing.xl,
   },
