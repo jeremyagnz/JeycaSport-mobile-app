@@ -1,2 +1,2 @@
-// Navigation configuration will go here
 export { AppNavigator } from './AppNavigator';
+export type { RootStackParamList } from './types';
