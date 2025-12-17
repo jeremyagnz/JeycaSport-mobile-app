@@ -1,12 +1,29 @@
+// Global color palette for baseball statistics app
+// Style: modern, professional, MLB-inspired, minimal
+
 export const colors = {
-  primary: '#007AFF',
-  secondary: '#5856D6',
-  success: '#34C759',
-  warning: '#FF9500',
-  error: '#FF3B30',
+  // Primary colors - MLB navy blue (professional, classic)
+  primary: '#002D62',
+
+  // Secondary colors - Baseball red (passion, energy)
+  secondary: '#BA0C2F',
+
+  // Background colors - Clean white for modern feel
   background: '#FFFFFF',
-  text: '#000000',
-  textSecondary: '#8E8E93',
-  border: '#C6C6C8',
-  card: '#F2F2F7',
+
+  // Text colors - High contrast for readability
+  text: '#1A1A1A',
+  textSecondary: '#6B7280',
+
+  // Success color - Baseball field green
+  success: '#2D7F3E',
+
+  // Danger color - Baseball red
+  danger: '#BA0C2F',
+
+  // Additional utility colors
+  warning: '#F59E0B',
+  error: '#BA0C2F',
+  border: '#E5E7EB',
+  card: '#F9FAFB',
 } as const;
