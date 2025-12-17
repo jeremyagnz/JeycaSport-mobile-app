@@ -4,7 +4,7 @@ import { VictoryLine, VictoryChart, VictoryTheme, VictoryAxis } from 'victory-na
 import { theme } from '../theme';
 
 interface PerformanceChartProps {
-  data: Array<{ game: number; average: number }>;
+  data: { game: number; average: number }[];
   title?: string;
 }
 
