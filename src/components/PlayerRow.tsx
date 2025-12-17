@@ -1,15 +1,17 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { IconButton } from 'react-native-paper';
 import { theme } from '../theme';
 
 interface PlayerRowProps {
   name: string;
   position: string;
+  team: string;
   number: number;
   onPress?: () => void;
 }
 
-export const PlayerRow: React.FC<PlayerRowProps> = ({ name, position, number, onPress }) => {
+export const PlayerRow: React.FC<PlayerRowProps> = ({ name, position, team, number, onPress }) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.numberContainer}>
@@ -17,8 +19,33 @@ export const PlayerRow: React.FC<PlayerRowProps> = ({ name, position, number, on
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{name}</Text>
-        <Text style={styles.position}>{position}</Text>
+        <View style={styles.detailsRow}>
+          <View style={styles.detailItem}>
+            <IconButton
+              icon="shield-star"
+              size={16}
+              iconColor={theme.colors.textSecondary}
+              style={styles.icon}
+            />
+            <Text style={styles.position}>{position}</Text>
+          </View>
+          <View style={styles.detailItem}>
+            <IconButton
+              icon="account-group"
+              size={16}
+              iconColor={theme.colors.textSecondary}
+              style={styles.icon}
+            />
+            <Text style={styles.team}>{team}</Text>
+          </View>
+        </View>
       </View>
+      <IconButton
+        icon="chevron-right"
+        size={24}
+        iconColor={theme.colors.textSecondary}
+        style={styles.chevron}
+      />
     </TouchableOpacity>
   );
 };
@@ -57,8 +84,30 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
     marginBottom: theme.spacing.xs,
   },
+  detailsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.md,
+  },
+  detailItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  icon: {
+    margin: 0,
+    padding: 0,
+  },
   position: {
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.textSecondary,
+    marginLeft: -8,
+  },
+  team: {
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.textSecondary,
+    marginLeft: -8,
+  },
+  chevron: {
+    margin: 0,
   },
 });
