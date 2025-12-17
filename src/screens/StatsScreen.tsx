@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
   categoryButtonTextActive: {
-    color: '#FFFFFF',
+    color: theme.colors.background,
   },
   listContent: {
     paddingHorizontal: theme.spacing.md,
