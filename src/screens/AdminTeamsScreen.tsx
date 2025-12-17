@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, FlatList, Alert } from 'react-native';
-import { FAB, List, IconButton, useTheme, Searchbar } from 'react-native-paper';
+import { FAB, List, IconButton, useTheme, Searchbar, ActivityIndicator } from 'react-native-paper';
 import type { MD3Theme } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { theme } from '../theme';
 import type { Team } from '../models/Team';
@@ -17,12 +17,11 @@ export const AdminTeamsScreen: React.FC = () => {
   const paperTheme = useTheme<MD3Theme>();
   const [teams, setTeams] = useState<Team[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-
-  useEffect(() => {
-    loadTeams();
-  }, []);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const loadTeams = async () => {
+    setIsLoading(true);
     try {
       const storedTeams = await loadData<Team[]>(STORAGE_KEYS.TEAMS);
       if (storedTeams && storedTeams.length > 0) {
@@ -34,19 +33,41 @@ export const AdminTeamsScreen: React.FC = () => {
     } catch (error) {
       console.error('Error loading teams:', error);
       setTeams([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleDeleteTeam = (teamId: string) => {
-    Alert.alert('Delete Team', 'Are you sure you want to delete this team?', [
+  useEffect(() => {
+    loadTeams();
+  }, []);
+
+  // Reload data when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      loadTeams();
+    }, [])
+  );
+
+  const handleDeleteTeam = (teamId: string, teamName: string) => {
+    Alert.alert('Delete Team', `Are you sure you want to delete ${teamName}?`, [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Delete',
         style: 'destructive',
         onPress: async () => {
-          const updatedTeams = teams.filter((t) => t.id !== teamId);
-          setTeams(updatedTeams);
-          await saveData(STORAGE_KEYS.TEAMS, updatedTeams);
+          setIsDeleting(true);
+          try {
+            const updatedTeams = teams.filter((t) => t.id !== teamId);
+            await saveData(STORAGE_KEYS.TEAMS, updatedTeams);
+            setTeams(updatedTeams);
+            Alert.alert('Success', `${teamName} has been deleted successfully`);
+          } catch (error) {
+            Alert.alert('Error', 'Failed to delete team. Please try again.');
+            console.error('Error deleting team:', error);
+          } finally {
+            setIsDeleting(false);
+          }
         },
       },
     ]);
@@ -69,17 +90,33 @@ export const AdminTeamsScreen: React.FC = () => {
             icon="pencil"
             size={20}
             onPress={() => navigation.navigate('AdminEditTeam', { teamId: item.id })}
+            disabled={isDeleting}
           />
           <IconButton
             icon="delete"
             size={20}
             iconColor={paperTheme.colors.error}
-            onPress={() => handleDeleteTeam(item.id)}
+            onPress={() => handleDeleteTeam(item.id, item.name)}
+            disabled={isDeleting}
           />
         </View>
       )}
     />
   );
+
+  if (isLoading) {
+    return (
+      <View
+        style={[
+          styles.container,
+          styles.centered,
+          { backgroundColor: paperTheme.colors.background },
+        ]}
+      >
+        <ActivityIndicator size="large" color={paperTheme.colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: paperTheme.colors.background }]}>
@@ -88,6 +125,7 @@ export const AdminTeamsScreen: React.FC = () => {
         onChangeText={setSearchQuery}
         value={searchQuery}
         style={styles.searchbar}
+        editable={!isDeleting}
       />
       <FlatList
         data={filteredTeams}
@@ -99,6 +137,7 @@ export const AdminTeamsScreen: React.FC = () => {
         icon="plus"
         style={[styles.fab, { backgroundColor: paperTheme.colors.primary }]}
         onPress={() => navigation.navigate('AdminEditTeam', { teamId: undefined })}
+        disabled={isDeleting}
       />
     </View>
   );
@@ -107,6 +146,10 @@ export const AdminTeamsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  centered: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   searchbar: {
     margin: theme.spacing.md,

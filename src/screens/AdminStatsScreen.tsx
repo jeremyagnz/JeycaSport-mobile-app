@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
-import { List, IconButton, useTheme, Searchbar, SegmentedButtons } from 'react-native-paper';
+import {
+  List,
+  IconButton,
+  useTheme,
+  Searchbar,
+  SegmentedButtons,
+  ActivityIndicator,
+} from 'react-native-paper';
 import type { MD3Theme } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { theme } from '../theme';
 import type { Player } from '../models/Player';
@@ -21,12 +28,10 @@ export const AdminStatsScreen: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-
-  useEffect(() => {
-    loadEntities();
-  }, []);
+  const [isLoading, setIsLoading] = useState(true);
 
   const loadEntities = async () => {
+    setIsLoading(true);
     try {
       const storedPlayers = await loadData<Player[]>(STORAGE_KEYS.PLAYERS);
       const storedTeams = await loadData<Team[]>(STORAGE_KEYS.TEAMS);
@@ -36,8 +41,21 @@ export const AdminStatsScreen: React.FC = () => {
     } catch (error) {
       console.error('Error loading data:', error);
       setPlayers(mockPlayers);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadEntities();
+  }, []);
+
+  // Reload data when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      loadEntities();
+    }, [])
+  );
 
   const filteredPlayers = players.filter(
     (player) =>
@@ -83,6 +101,20 @@ export const AdminStatsScreen: React.FC = () => {
     />
   );
 
+  if (isLoading) {
+    return (
+      <View
+        style={[
+          styles.container,
+          styles.centered,
+          { backgroundColor: paperTheme.colors.background },
+        ]}
+      >
+        <ActivityIndicator size="large" color={paperTheme.colors.primary} />
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: paperTheme.colors.background }]}>
       <SegmentedButtons
@@ -122,6 +154,10 @@ export const AdminStatsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  centered: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   segmented: {
     margin: theme.spacing.md,

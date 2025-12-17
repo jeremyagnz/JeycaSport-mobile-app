@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, FlatList, Alert } from 'react-native';
-import { FAB, List, IconButton, useTheme, Searchbar } from 'react-native-paper';
+import { FAB, List, IconButton, useTheme, Searchbar, ActivityIndicator } from 'react-native-paper';
 import type { MD3Theme } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { theme } from '../theme';
 import type { Player } from '../models/Player';
@@ -18,12 +18,11 @@ export const AdminPlayersScreen: React.FC = () => {
   const paperTheme = useTheme<MD3Theme>();
   const [players, setPlayers] = useState<Player[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-
-  useEffect(() => {
-    loadPlayers();
-  }, []);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const loadPlayers = async () => {
+    setIsLoading(true);
     try {
       const storedPlayers = await loadData<Player[]>(STORAGE_KEYS.PLAYERS);
       if (storedPlayers && storedPlayers.length > 0) {
@@ -36,19 +35,41 @@ export const AdminPlayersScreen: React.FC = () => {
     } catch (error) {
       console.error('Error loading players:', error);
       setPlayers(mockPlayers);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleDeletePlayer = (playerId: string) => {
-    Alert.alert('Delete Player', 'Are you sure you want to delete this player?', [
+  useEffect(() => {
+    loadPlayers();
+  }, []);
+
+  // Reload data when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      loadPlayers();
+    }, [])
+  );
+
+  const handleDeletePlayer = (playerId: string, playerName: string) => {
+    Alert.alert('Delete Player', `Are you sure you want to delete ${playerName}?`, [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Delete',
         style: 'destructive',
         onPress: async () => {
-          const updatedPlayers = players.filter((p) => p.id !== playerId);
-          setPlayers(updatedPlayers);
-          await saveData(STORAGE_KEYS.PLAYERS, updatedPlayers);
+          setIsDeleting(true);
+          try {
+            const updatedPlayers = players.filter((p) => p.id !== playerId);
+            await saveData(STORAGE_KEYS.PLAYERS, updatedPlayers);
+            setPlayers(updatedPlayers);
+            Alert.alert('Success', `${playerName} has been deleted successfully`);
+          } catch (error) {
+            Alert.alert('Error', 'Failed to delete player. Please try again.');
+            console.error('Error deleting player:', error);
+          } finally {
+            setIsDeleting(false);
+          }
         },
       },
     ]);
@@ -72,17 +93,33 @@ export const AdminPlayersScreen: React.FC = () => {
             icon="pencil"
             size={20}
             onPress={() => navigation.navigate('AdminEditPlayer', { playerId: item.id })}
+            disabled={isDeleting}
           />
           <IconButton
             icon="delete"
             size={20}
             iconColor={paperTheme.colors.error}
-            onPress={() => handleDeletePlayer(item.id)}
+            onPress={() => handleDeletePlayer(item.id, item.name)}
+            disabled={isDeleting}
           />
         </View>
       )}
     />
   );
+
+  if (isLoading) {
+    return (
+      <View
+        style={[
+          styles.container,
+          styles.centered,
+          { backgroundColor: paperTheme.colors.background },
+        ]}
+      >
+        <ActivityIndicator size="large" color={paperTheme.colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: paperTheme.colors.background }]}>
@@ -91,6 +128,7 @@ export const AdminPlayersScreen: React.FC = () => {
         onChangeText={setSearchQuery}
         value={searchQuery}
         style={styles.searchbar}
+        editable={!isDeleting}
       />
       <FlatList
         data={filteredPlayers}
@@ -102,6 +140,7 @@ export const AdminPlayersScreen: React.FC = () => {
         icon="plus"
         style={[styles.fab, { backgroundColor: paperTheme.colors.primary }]}
         onPress={() => navigation.navigate('AdminEditPlayer', { playerId: undefined })}
+        disabled={isDeleting}
       />
     </View>
   );
@@ -110,6 +149,10 @@ export const AdminPlayersScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  centered: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   searchbar: {
     margin: theme.spacing.md,
