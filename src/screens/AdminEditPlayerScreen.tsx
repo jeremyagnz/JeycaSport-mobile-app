@@ -125,9 +125,15 @@ export const AdminEditPlayerScreen: React.FC = () => {
         disabled={isLoading}
       />
       <TextInput
-        label="Position *"
+        label="Position * (P, C, 1B, 2B, 3B, SS, LF, CF, RF, DH)"
         value={position}
-        onChangeText={(text) => setPosition(text as Position)}
+        onChangeText={(text) => {
+          const upperText = text.toUpperCase();
+          const validPositions = ['P', 'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'];
+          if (validPositions.includes(upperText) || text === '') {
+            setPosition(upperText as Position);
+          }
+        }}
         mode="outlined"
         style={styles.input}
         disabled={isLoading}
@@ -169,16 +175,28 @@ export const AdminEditPlayerScreen: React.FC = () => {
       <TextInput
         label="Bats (L/R/S)"
         value={bats}
-        onChangeText={(text) => setBats(text as BatSide)}
+        onChangeText={(text) => {
+          const upperText = text.toUpperCase();
+          if (['L', 'R', 'S'].includes(upperText) || text === '') {
+            setBats(upperText as BatSide);
+          }
+        }}
         mode="outlined"
+        maxLength={1}
         style={styles.input}
         disabled={isLoading}
       />
       <TextInput
         label="Throws (L/R)"
         value={throws}
-        onChangeText={(text) => setThrows(text as ThrowSide)}
+        onChangeText={(text) => {
+          const upperText = text.toUpperCase();
+          if (['L', 'R'].includes(upperText) || text === '') {
+            setThrows(upperText as ThrowSide);
+          }
+        }}
         mode="outlined"
+        maxLength={1}
         style={styles.input}
         disabled={isLoading}
       />

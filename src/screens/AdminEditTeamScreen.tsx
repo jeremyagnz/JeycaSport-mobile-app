@@ -57,17 +57,41 @@ export const AdminEditTeamScreen: React.FC = () => {
     try {
       const teams = (await loadData<Team[]>(STORAGE_KEYS.TEAMS)) || [];
 
-      const teamData: Partial<Team> = {
-        id: isEditing ? teamId! : `team_${Date.now()}`,
-        name: name.trim(),
-        abbreviation: abbreviation.trim().toUpperCase(),
-      };
-
       let updatedTeams: Team[];
       if (isEditing) {
-        updatedTeams = teams.map((t) => (t.id === teamId ? ({ ...t, ...teamData } as Team) : t));
+        updatedTeams = teams.map((t) => {
+          if (t.id === teamId) {
+            return {
+              ...t,
+              name: name.trim(),
+              abbreviation: abbreviation.trim().toUpperCase(),
+            };
+          }
+          return t;
+        });
       } else {
-        updatedTeams = [...teams, teamData as Team];
+        // Create a new team with all required fields
+        const newTeam: Team = {
+          id: `team_${Date.now()}`,
+          name: name.trim(),
+          abbreviation: abbreviation.trim().toUpperCase(),
+          city: 'Unknown',
+          state: 'Unknown',
+          league: 'AL',
+          division: 'East',
+          founded: new Date().getFullYear(),
+          stadium: {
+            name: 'Stadium',
+            capacity: 0,
+            surface: 'Grass',
+            yearOpened: new Date().getFullYear(),
+          },
+          colors: {
+            primary: '#000000',
+            secondary: '#FFFFFF',
+          },
+        };
+        updatedTeams = [...teams, newTeam];
       }
 
       await saveData(STORAGE_KEYS.TEAMS, updatedTeams);

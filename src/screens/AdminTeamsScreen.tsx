@@ -9,7 +9,6 @@ import type { Team } from '../models/Team';
 import type { RootStackParamList } from '../navigation/types';
 import { loadData, saveData } from '../services/storage';
 import { STORAGE_KEYS } from '../services/storage';
-import { mockTeams } from '../constants/mockData';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -29,13 +28,12 @@ export const AdminTeamsScreen: React.FC = () => {
       if (storedTeams && storedTeams.length > 0) {
         setTeams(storedTeams);
       } else {
-        // Initialize with mock data
-        await saveData(STORAGE_KEYS.TEAMS, mockTeams);
-        setTeams(mockTeams as Team[]);
+        // Don't initialize with incomplete mock data - start with empty array
+        setTeams([]);
       }
     } catch (error) {
       console.error('Error loading teams:', error);
-      setTeams(mockTeams as Team[]);
+      setTeams([]);
     }
   };
 
