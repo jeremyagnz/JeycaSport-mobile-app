@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { VictoryLine, VictoryChart, VictoryTheme, VictoryAxis } from 'victory-native';
 import { theme } from '../theme';
@@ -6,14 +6,18 @@ import { theme } from '../theme';
 interface PerformanceChartProps {
   data: { game: number; average: number }[];
   title?: string;
+  height?: number;
 }
 
 export const PerformanceChart: React.FC<PerformanceChartProps> = ({
   data,
   title = 'Batting Average Progression',
+  height = 250,
 }) => {
-  const screenWidth = Dimensions.get('window').width;
-  const chartWidth = screenWidth - theme.spacing.md * 2;
+  const chartWidth = useMemo(() => {
+    const screenWidth = Dimensions.get('window').width;
+    return screenWidth - theme.spacing.md * 2;
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -21,14 +25,23 @@ export const PerformanceChart: React.FC<PerformanceChartProps> = ({
       <View style={styles.chartWrapper}>
         <VictoryChart
           width={chartWidth}
-          height={250}
+          height={height}
           theme={VictoryTheme.material}
-          padding={{ top: 20, bottom: 40, left: 50, right: 20 }}
+          padding={{
+            top: theme.spacing.md,
+            bottom: theme.spacing.xl,
+            left: 50,
+            right: theme.spacing.md,
+          }}
         >
           <VictoryAxis
             label="Game"
             style={{
-              axisLabel: { fontSize: 12, padding: 30, fill: theme.colors.textSecondary },
+              axisLabel: {
+                fontSize: theme.typography.fontSize.xs,
+                padding: theme.spacing.lg,
+                fill: theme.colors.textSecondary,
+              },
               tickLabels: { fontSize: 10, fill: theme.colors.textSecondary },
               grid: { stroke: theme.colors.border, strokeWidth: 0.5 },
             }}
@@ -37,7 +50,11 @@ export const PerformanceChart: React.FC<PerformanceChartProps> = ({
             dependentAxis
             label="Batting Average"
             style={{
-              axisLabel: { fontSize: 12, padding: 40, fill: theme.colors.textSecondary },
+              axisLabel: {
+                fontSize: theme.typography.fontSize.xs,
+                padding: theme.spacing.xl,
+                fill: theme.colors.textSecondary,
+              },
               tickLabels: { fontSize: 10, fill: theme.colors.textSecondary },
               grid: { stroke: theme.colors.border, strokeWidth: 0.5 },
             }}
