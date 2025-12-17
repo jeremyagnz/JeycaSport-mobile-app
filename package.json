@@ -24,8 +24,10 @@
     "react-native-paper": "^5.14.5",
     "react-native-safe-area-context": "^5.6.2",
     "react-native-screens": "^4.19.0",
+    "react-native-svg": "^15.15.1",
     "react-native-vector-icons": "^10.3.0",
-    "react-native-web": "^0.21.2"
+    "react-native-web": "^0.21.2",
+    "victory-native": "^41.20.2"
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
