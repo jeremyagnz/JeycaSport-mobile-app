@@ -153,7 +153,7 @@ export const StatsScreen: React.FC = () => {
       >
         {renderCategoryButton('AVG', 'Batting Average')}
         {renderCategoryButton('OPS', 'On-Base + Slugging')}
-        {renderCategoryButton('ERA', 'Earned Run Avg')}
+        {renderCategoryButton('ERA', 'ERA (Pitchers)')}
       </ScrollView>
 
       {/* Stats Table */}
@@ -180,16 +180,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.md,
     paddingTop: theme.spacing.md,
     paddingBottom: theme.spacing.sm,
+    alignItems: 'center',
   },
   title: {
     fontSize: theme.typography.fontSize.xxl,
     fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.text,
     marginBottom: theme.spacing.xs,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.textSecondary,
+    textAlign: 'center',
   },
   categoryContainer: {
     paddingHorizontal: theme.spacing.md,
