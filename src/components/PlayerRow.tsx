@@ -3,6 +3,13 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { IconButton, Icon } from 'react-native-paper';
 import { theme } from '../theme';
 
+// Icon constants for consistent usage
+const ICONS = {
+  POSITION: 'shield-star',
+  TEAM: 'account-group',
+  CHEVRON: 'chevron-right',
+} as const;
+
 interface PlayerRowProps {
   name: string;
   position: string;
@@ -21,17 +28,17 @@ export const PlayerRow: React.FC<PlayerRowProps> = ({ name, position, team, numb
         <Text style={styles.name}>{name}</Text>
         <View style={styles.detailsRow}>
           <View style={styles.detailItem}>
-            <Icon source="shield-star" size={16} color={theme.colors.textSecondary} />
+            <Icon source={ICONS.POSITION} size={16} color={theme.colors.textSecondary} />
             <Text style={styles.position}>{position}</Text>
           </View>
           <View style={styles.detailItem}>
-            <Icon source="account-group" size={16} color={theme.colors.textSecondary} />
+            <Icon source={ICONS.TEAM} size={16} color={theme.colors.textSecondary} />
             <Text style={styles.team}>{team}</Text>
           </View>
         </View>
       </View>
       <IconButton
-        icon="chevron-right"
+        icon={ICONS.CHEVRON}
         size={24}
         iconColor={theme.colors.textSecondary}
         style={styles.chevron}

@@ -11,6 +11,21 @@ import { mockPlayers, teamNames } from '../constants/mockData';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
+// Pre-compute lowercase values for efficient searching
+const searchablePlayersData = mockPlayers.map((player) => ({
+  player,
+  searchText: `${player.name} ${player.position} ${teamNames[player.teamId] || ''}`.toLowerCase(),
+}));
+
+// Validate data consistency on component mount
+const invalidPlayers = mockPlayers.filter((player) => !teamNames[player.teamId]);
+if (invalidPlayers.length > 0) {
+  console.warn(
+    `Found ${invalidPlayers.length} player(s) with invalid team IDs:`,
+    invalidPlayers.map((p) => ({ id: p.id, name: p.name, teamId: p.teamId }))
+  );
+}
+
 export const PlayersScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,12 +37,9 @@ export const PlayersScreen: React.FC = () => {
     }
 
     const query = searchQuery.toLowerCase();
-    return mockPlayers.filter(
-      (player) =>
-        player.name.toLowerCase().includes(query) ||
-        player.position.toLowerCase().includes(query) ||
-        teamNames[player.teamId]?.toLowerCase().includes(query)
-    );
+    return searchablePlayersData
+      .filter((item) => item.searchText.includes(query))
+      .map((item) => item.player);
   }, [searchQuery]);
 
   // Handle player press
@@ -40,21 +52,15 @@ export const PlayersScreen: React.FC = () => {
 
   // Render player item
   const renderPlayer = useCallback(
-    ({ item }: { item: Player }) => {
-      const teamName = teamNames[item.teamId];
-      if (!teamName) {
-        console.warn(`Player ${item.name} (${item.id}) has invalid teamId: ${item.teamId}`);
-      }
-      return (
-        <PlayerRow
-          name={item.name}
-          position={item.position}
-          team={teamName || `Team #${item.teamId}`}
-          number={item.number}
-          onPress={() => handlePlayerPress(item.id)}
-        />
-      );
-    },
+    ({ item }: { item: Player }) => (
+      <PlayerRow
+        name={item.name}
+        position={item.position}
+        team={teamNames[item.teamId] || `Team #${item.teamId}`}
+        number={item.number}
+        onPress={() => handlePlayerPress(item.id)}
+      />
+    ),
     [handlePlayerPress]
   );
 
