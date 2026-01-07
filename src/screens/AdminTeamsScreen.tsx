@@ -12,6 +12,14 @@ import { STORAGE_KEYS } from '../services/storage';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
+/**
+ * Delay in milliseconds to ensure previous Alert is dismissed before showing the next one.
+ * React Native's Alert component can have timing issues when showing a new Alert
+ * immediately after another is dismissed. This delay prevents UI glitches and ensures
+ * messages are properly displayed across different devices and React Native versions.
+ */
+const ALERT_DISMISS_DELAY = 100;
+
 export const AdminTeamsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const paperTheme = useTheme<MD3Theme>();
@@ -61,12 +69,18 @@ export const AdminTeamsScreen: React.FC = () => {
             const updatedTeams = teams.filter((t) => t.id !== teamId);
             await saveData(STORAGE_KEYS.TEAMS, updatedTeams);
             setTeams(updatedTeams);
-            Alert.alert('Success', `${teamName} has been deleted successfully`);
-          } catch (error) {
-            Alert.alert('Error', 'Failed to delete team. Please try again.');
-            console.error('Error deleting team:', error);
-          } finally {
+            // Reset loading state before showing Alert to ensure responsive UI
             setIsDeleting(false);
+            // Use setTimeout to ensure the previous Alert is dismissed before showing the next one
+            setTimeout(() => {
+              Alert.alert('Success', `${teamName} has been deleted successfully`);
+            }, ALERT_DISMISS_DELAY);
+          } catch (error) {
+            setIsDeleting(false);
+            console.error('Error deleting team:', error);
+            setTimeout(() => {
+              Alert.alert('Error', 'Failed to delete team. Please try again.');
+            }, ALERT_DISMISS_DELAY);
           }
         },
       },
